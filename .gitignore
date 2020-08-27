@@ -1,4 +1,5 @@
 *.mp3
 .ipynb_checkpoints
+.vscode
 fixed_music
 undone_music
