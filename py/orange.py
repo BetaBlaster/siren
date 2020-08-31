@@ -10,7 +10,7 @@ def url_to_bmimg(img_url):
 
 class MyFrame(wx.Frame):    
     def __init__(self):
-        super().__init__(parent=None, title='siren')
+        super().__init__(parent=None, title='siren') #size=(400,500)
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
 
@@ -22,11 +22,12 @@ class MyFrame(wx.Frame):
         my_sizer.Add(self.my_btn, 0, wx.ALL | wx.CENTER, 5)        
 
         
-        img = url_to_bmimg("https://lh3.googleusercontent.com/IeNJWoKYx1waOhfWF6TiuSiWBLfqLb18lmZYXSgsH1fvb8v1IYiZr5aYWe0Gxu-pVZX3")
+        img = url_to_bmimg("https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b9/ab/a7/b9aba7fd-bccd-9e84-8cc6-41f616ddb429/source/200x200bb.jpg")
         self.my_img_bitmap = wx.StaticBitmap(panel, -1, img, (10,10));
         my_sizer.Add(self.my_img_bitmap, 0, wx.ALL | wx.CENTER, 5)        
 
-        panel.SetSizer(my_sizer)        
+        panel.SetSizer(my_sizer)      
+        my_sizer.Fit(self)  
         self.Show()
 
     def on_press(self, event):
@@ -50,6 +51,3 @@ if __name__ == '__main__':
     app = wx.App()
     frame = MyFrame()
     app.MainLoop()
-
-# /anaconda3/bin/pythonw /Users/andrewm/GITHUB/siren/program.py
-# /anaconda3/bin/pythonw
