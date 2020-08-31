@@ -2,11 +2,19 @@ import wx
 import urllib.request
 import io
 import json
+from itunesJSON import itunesJSON
 
 def url_to_bmimg(img_url):
         buf = urllib.request.urlopen(img_url).read()
         sbuf = io.BytesIO(buf)
-        return wx.ImageFromStream(sbuf).ConvertToBitmap()
+        return wx.Image(sbuf).ConvertToBitmap()
+
+def get_itunes(search_term):
+    ping_url = "https://itunes.apple.com/search?term=" + search_term + "&limit=10&entity=song"
+    ituneURL = urllib.request.urlopen(ping_url)
+    itunes_data = ituneURL.read()
+    encoding = ituneURL.info().get_content_charset('utf-8')
+    return json.loads(itunes_data.decode(encoding))
 
 class MyFrame(wx.Frame):    
     def __init__(self):
@@ -33,15 +41,8 @@ class MyFrame(wx.Frame):
     def on_press(self, event):
         value = self.text_ctrl.GetValue().replace(" ", "+")
         if value:
-            ping_url = "https://itunes.apple.com/search?term=" + value + "&limit=10&entity=song"
-            ituneURL = urllib.request.urlopen(ping_url)
-            itunes_data = ituneURL.read()
-            encoding = ituneURL.info().get_content_charset('utf-8')
-            json_obj = json.loads(itunes_data.decode(encoding))
-            img_url = json_obj["results"][0]["artworkUrl100"]
-            print(f'Your value is {value}')
-            print(f'URL: {img_url}')
-            self.my_img_bitmap.SetBitmap(url_to_bmimg(img_url))
+            self.itunes_json = itunesJSON(value)
+            self.my_img_bitmap.SetBitmap(url_to_bmimg(self.itunes_json.get_image()))
             self.Refresh()
             
         else:
