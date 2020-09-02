@@ -1,6 +1,6 @@
 # siren
-main - for single song use
+main - for single song use <br>
 album - for playlist downloads
 
 ## dependencies
-eyeD3
+eyeD3, wxpython
