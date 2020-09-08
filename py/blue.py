@@ -51,6 +51,9 @@ class Mp3Panel(wx.Panel):
         self.list_ctrl.SetDropTarget(dt) 
 
     def update_mp3_listing(self, folder_path):
+        """
+        Function to replace all files in mp3 listing with mp3 files in folder
+        """
 
         self.current_folder_path = folder_path
         self.list_ctrl.ClearAll()
@@ -79,6 +82,9 @@ class Mp3Panel(wx.Panel):
             print(self.indexer)
 
     def add_mp3_listing(self, file_path):
+        """
+        Function to add mp3 song to listing 
+        """
 
         print(self.row_dir_dict.values())
 

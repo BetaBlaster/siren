@@ -4,17 +4,13 @@ import io
 import json
 from itunesJSON import itunesJSON
 
+# Pane pinging itunes
+# lower right of window
+
 def url_to_bmimg(img_url):
         buf = urllib.request.urlopen(img_url).read()
         sbuf = io.BytesIO(buf)
         return wx.Image(sbuf).ConvertToBitmap()
-
-def get_itunes(search_term):
-    ping_url = "https://itunes.apple.com/search?term=" + search_term + "&limit=10&entity=song"
-    ituneURL = urllib.request.urlopen(ping_url)
-    itunes_data = ituneURL.read()
-    encoding = ituneURL.info().get_content_charset('utf-8')
-    return json.loads(itunes_data.decode(encoding))
 
 class MyFrame(wx.Frame):    
     def __init__(self):
@@ -33,6 +29,13 @@ class MyFrame(wx.Frame):
         img = url_to_bmimg("https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b9/ab/a7/b9aba7fd-bccd-9e84-8cc6-41f616ddb429/source/200x200bb.jpg")
         self.my_img_bitmap = wx.StaticBitmap(panel, -1, img, (10,10));
         my_sizer.Add(self.my_img_bitmap, 0, wx.ALL | wx.CENTER, 5)        
+        self.current_itunes_name = wx.TextCtrl(panel, size = (200,25))
+        self.current_tunes_artist = wx.TextCtrl(panel, size = (200,25))
+        my_sizer.Add(self.current_itunes_name, 0, wx.CENTER, 20)
+        my_sizer.Add(self.current_tunes_artist, 0, wx.CENTER, 20)
+
+
+
 
         panel.SetSizer(my_sizer)      
         my_sizer.Fit(self)  
@@ -43,6 +46,8 @@ class MyFrame(wx.Frame):
         if value:
             self.itunes_json = itunesJSON(value)
             self.my_img_bitmap.SetBitmap(url_to_bmimg(self.itunes_json.get_image()))
+            self.current_itunes_name.ChangeValue(self.itunes_json.get_track_name())
+            self.current_tunes_artist.ChangeValue(self.itunes_json.get_artist())
             self.Refresh()
             
         else:
