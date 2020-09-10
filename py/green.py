@@ -15,38 +15,50 @@ import json
 # GOOD FOR EVENT HANDLING AFTER STUFF IS CHANGED
 
 
-def get_itunes(search_term):
-    ping_url = "https://itunes.apple.com/search?term=" + search_term + "&limit=10&entity=song"
-    ituneURL = urllib.request.urlopen(ping_url)
-    itunes_data = ituneURL.read()
-    encoding = ituneURL.info().get_content_charset('utf-8')
-    return json.loads(itunes_data.decode(encoding))
-
 class MyFrame(wx.Frame):    
     def __init__(self):
         super().__init__(parent=None, title='siren') #size=(400,500)
         panel = wx.Panel(self)        
-        my_sizer = wx.BoxSizer(wx.VERTICAL)        
-
-        self.text_ctrl = wx.TextCtrl(panel)
-        my_sizer.Add(self.text_ctrl, 0, wx.ALL | wx.EXPAND, 5)      
+        my_sizer = wx.BoxSizer(wx.VERTICAL)           
 
 
+        # Make into function
         mp3_object = eyed3.load(os.getcwd() + "/test.mp3")
-        img = io.BytesIO(mp3_object.tag.images[0].image_data)
+        img = io.BytesIO(mp3_object.tag.images[0].image_data) # If no images, load pic i make
         img = wx.Image(img).Scale(200, 200).ConvertToBitmap()
 
-        self.my_img_bitmap = wx.StaticBitmap(panel, -1, img, (10,10));
-        my_sizer.Add(self.my_img_bitmap, 0, wx.ALL | wx.CENTER, 5)        
-        self.current_name = wx.TextCtrl(panel)
-        self.current_artist = wx.TextCtrl(panel)
-        my_sizer.Add(self.current_name, 0, wx.CENTER, 20)
-        my_sizer.Add(self.current_artist, 0, wx.CENTER, 20)
-        title = mp3_object.tag.title
+        my_img_bitmap = wx.StaticBitmap(panel, -1, img, (10,10));
+        my_sizer.Add(my_img_bitmap, 0, wx.ALL | wx.CENTER, 5)     
+           
+        fields_master = wx.BoxSizer(wx.HORIZONTAL)
+        fields_left = wx.BoxSizer(wx.VERTICAL) 
+        fields_right = wx.BoxSizer(wx.VERTICAL) 
 
-        self.current_name.ChangeValue(title)
-        self.current_artist.ChangeValue(mp3_object.tag.artist)
+        current_name = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        current_album = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        current_genre = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        current_artist = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        current_track = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        current_year = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
 
+        fields_left.Add(current_name, 0, wx.CENTER, 20)
+        fields_left.Add(current_album, 0, wx.CENTER, 20)
+        fields_left.Add(current_genre, 0, wx.CENTER, 20)
+        fields_right.Add(current_artist, 0, wx.CENTER, 20)
+        fields_right.Add(current_track, 0, wx.CENTER, 20)
+        fields_right.Add(current_year, 0, wx.CENTER, 20)
+        fields_master.Add(fields_left, 0, wx.CENTER, 20)
+        fields_master.Add(fields_right, 0, wx.CENTER, 20)
+        my_sizer.Add(fields_master, 0, wx.ALL | wx.CENTER, 5)     
+
+
+        current_name.ChangeValue(mp3_object.tag.title)
+        current_album.ChangeValue(mp3_object.tag.album)
+        current_genre.ChangeValue(str(mp3_object.tag.genre)) #See whats up with this; maybe list of genres
+        current_artist.ChangeValue(mp3_object.tag.artist)
+        test_track = str(mp3_object.tag.track_num[0]) + " of " + str(mp3_object.tag.track_num[1])
+        current_track.ChangeValue(test_track) 
+        current_year.ChangeValue("Will be added eventually")
 
 
 
