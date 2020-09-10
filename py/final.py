@@ -1,6 +1,6 @@
+import wx
 import eyed3
 import glob
-import wx
 import os
 
 class DropTarget(wx.FileDropTarget): 
@@ -22,7 +22,6 @@ class DropTarget(wx.FileDropTarget):
             )
             return False
 
-
 class Mp3Panel(wx.Panel):    
     def __init__(self, parent):
         super().__init__(parent)
@@ -31,7 +30,7 @@ class Mp3Panel(wx.Panel):
         self.row_dir_dict = {}
 
         self.list_ctrl = wx.ListCtrl(
-            self, size=(-1, 100), 
+            self, size=(-1, 200), 
             style=wx.LC_REPORT | wx.BORDER_SUNKEN
         )
         self.list_ctrl.InsertColumn(0, 'Filename', width=200)
@@ -99,7 +98,6 @@ class Mp3Panel(wx.Panel):
             print(self.indexer)
             self.indexer += 1
             print(self.indexer)
-
         else:
             wx.MessageBox(
                 'File already in list!',
@@ -112,30 +110,59 @@ class Mp3Panel(wx.Panel):
         print('in on_edit')
         print(item)
 
+class RandomPanel(wx.Panel):
+    """"""
 
-class Mp3Frame(wx.Frame):
+    #----------------------------------------------------------------------
+    def __init__(self, parent, color):
+        """Constructor"""
+        wx.Panel.__init__(self, parent)
+        self.SetBackgroundColour(color)
+
+class MasterPanel(wx.Panel):
+    def __init__(self,parent):
+        wx.Panel.__init__(self, parent) 
+
+        horizSplit = wx.SplitterWindow(self)
+        editPaneSplit = wx.SplitterWindow(horizSplit)
+
+        self.currentPanel = RandomPanel(editPaneSplit, "green")
+        self.itunesPanel = RandomPanel(editPaneSplit, "orange")
+        editPaneSplit.SplitVertically(self.currentPanel, self.itunesPanel)
+        editPaneSplit.SetSashGravity(0.5)
+        
+        self.searchPanel = Mp3Panel(horizSplit)
+        horizSplit.SplitHorizontally(self.searchPanel, editPaneSplit)
+        horizSplit.SetSashGravity(0.5)
+
+        my_sizer = wx.BoxSizer(wx.VERTICAL)        
+        my_sizer.Add(horizSplit, 1, wx.EXPAND)
+        self.SetSizer(my_sizer)
+        
+
+
+class MainFrame(wx.Frame):    
     def __init__(self):
-        wx.Frame.__init__(self, parent=None, 
-                          title='Mp3 Tag Editor')
-        self.panel = Mp3Panel(self)
+        wx.Frame.__init__(self, None, title='siren', size=(1000,700)) # sections below are size=(400,500)
+        self.panel = MasterPanel(self)
         self.create_menu()
-        self.panel.update_mp3_listing(os.getcwd())
+
+        self.panel.searchPanel.update_mp3_listing(os.getcwd())
+        
         self.Show()
+
 
     def create_menu(self):
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
-        open_folder_menu_item = file_menu.Append(
-            wx.ID_ANY, 'Open Folder', 
-            'Open a folder with MP3s'
-        )
+        add_file_menu_item = file_menu.Append(wx.ID_ANY, 'Add MP3', 'Add an MP3 file')
+        open_folder_menu_item = file_menu.Append(wx.ID_ANY, 'Open Folder', 'Open a folder with MP3s')
         menu_bar.Append(file_menu, '&File')
-        self.Bind(
-            event=wx.EVT_MENU, 
-            handler=self.on_open_folder,
-            source=open_folder_menu_item,
-        )
+        self.Bind(event=wx.EVT_MENU, handler=self.on_add_file, source=add_file_menu_item,)
+        self.Bind(event=wx.EVT_MENU, handler=self.on_open_folder, source=open_folder_menu_item,)
         self.SetMenuBar(menu_bar)
+        # About, Quit
+        # Cut,Copy,Paste
 
     def on_open_folder(self, event):
         title = "Choose a directory:"
@@ -145,7 +172,18 @@ class Mp3Frame(wx.Frame):
             self.panel.update_mp3_listing(dlg.GetPath())
         dlg.Destroy()
 
+    def on_add_file(self, event):
+        print("do this shtuff")
+        title = "Choose an MP3:"
+        # CHANGE 'DIR'dialog to file and try to do MP3, if not just do check after select
+        # dlg = wx.DirDialog(self, title, style=wx.DD_DEFAULT_STYLE)
+        
+        # if dlg.ShowModal() == wx.ID_OK:
+        #     self.panel.update_mp3_listing(dlg.GetPath())
+        # dlg.Destroy()
+
+
 if __name__ == '__main__':
-    app = wx.App(False)
-    frame = Mp3Frame()
+    app = wx.App()
+    frame = MainFrame()
     app.MainLoop()
