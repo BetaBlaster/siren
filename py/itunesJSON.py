@@ -11,6 +11,7 @@ class itunesJSON():
         encoding = ituneURL.info().get_content_charset('utf-8')
         
         self.json = json.loads(itunes_data.decode(encoding))["results"]
+        self.length = len(self.json)
 
     def get_image(self, json_index = 0, size = 200):
         self.img_url = self.json[json_index]["artworkUrl100"]

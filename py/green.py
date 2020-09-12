@@ -9,12 +9,6 @@ import json
 # lower left of window
 
 
-# EVT_TEXT: Respond to a wxEVT_TEXT event, generated when the text changes.
-# Notice that this event will be sent when the text controls contents changes – wx.TextCtrl.SetValue is called);
-
-# GOOD FOR EVENT HANDLING AFTER STUFF IS CHANGED
-
-
 class MyFrame(wx.Frame):    
     def __init__(self):
         super().__init__(parent=None, title='siren') #size=(400,500)
