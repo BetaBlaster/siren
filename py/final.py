@@ -10,10 +10,10 @@ class DropTarget(wx.FileDropTarget):
    def OnDropFiles(self, x, y, data): 
         print(data[0])
         if data[0].endswith(".mp3"):
-            Mp3Panel.add_mp3_listing(frame.panel, data[0])
+            frame.panel.searchPanel.add_mp3_listing(data[0])
             return True 
         elif os.path.isdir(data[0]):
-            Mp3Panel.update_mp3_listing(frame.panel, data[0])
+            frame.panel.searchPanel.update_mp3_listing(data[0])
             return True 
         else:
             wx.MessageBox(
@@ -29,10 +29,7 @@ class Mp3Panel(wx.Panel):
         self.row_obj_dict = {}
         self.row_dir_dict = {}
 
-        self.list_ctrl = wx.ListCtrl(
-            self, size=(-1, 200), 
-            style=wx.LC_REPORT | wx.BORDER_SUNKEN
-        )
+        self.list_ctrl = wx.ListCtrl(self, size=(-1, 200), style=wx.LC_REPORT | wx.BORDER_SUNKEN)
         self.list_ctrl.InsertColumn(0, 'Filename', width=200)
         self.list_ctrl.InsertColumn(1, 'Song Name', width=200)
         self.list_ctrl.InsertColumn(2, 'Artist', width=140)
@@ -47,6 +44,9 @@ class Mp3Panel(wx.Panel):
         dt = DropTarget(self.list_ctrl) 
         self.list_ctrl.SetDropTarget(dt) 
 
+    # function for add mp3 uses once, update mp3 uses for loop
+    # Include if's for if metadata isnt present
+
     def update_mp3_listing(self, folder_path):
         """
         Function to replace all files in mp3 listing with mp3 files in folder
@@ -59,8 +59,6 @@ class Mp3Panel(wx.Panel):
         self.list_ctrl.InsertColumn(2, 'Artist', width=140)
         self.list_ctrl.InsertColumn(3, 'Album', width=140)
         self.list_ctrl.InsertColumn(4, 'Location', width=200)
-        self.row_obj_dict.clear()
-        self.row_dir_dict.clear()
 
         mp3s = glob.glob(folder_path + '/*.mp3')
         mp3_objects = [] # USELESS?
@@ -139,8 +137,6 @@ class MasterPanel(wx.Panel):
         my_sizer.Add(horizSplit, 1, wx.EXPAND)
         self.SetSizer(my_sizer)
         
-
-
 class MainFrame(wx.Frame):    
     def __init__(self):
         wx.Frame.__init__(self, None, title='siren', size=(1000,700)) # sections below are size=(400,500)
@@ -169,7 +165,7 @@ class MainFrame(wx.Frame):
         dlg = wx.DirDialog(self, title, 
                            style=wx.DD_DEFAULT_STYLE)
         if dlg.ShowModal() == wx.ID_OK:
-            self.panel.update_mp3_listing(dlg.GetPath())
+            self.panel.searchPanel.update_mp3_listing(dlg.GetPath())
         dlg.Destroy()
 
     def on_add_file(self, event):
