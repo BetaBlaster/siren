@@ -51,6 +51,12 @@ class MyFrame(wx.Frame):
         fields_master.Add(fields_right, 0, wx.CENTER, 20)
         my_sizer.Add(fields_master, 0, wx.ALL | wx.CENTER, 5)     
 
+        self.current_name.SetHint('Song')
+        self.current_album.SetHint('Album')
+        self.current_genre.SetHint('Genre')
+        self.current_artist.SetHint('Artist')
+        self.current_track.SetHint('Track Number')
+        self.current_year.SetHint('Year')
 
         self.current_name.ChangeValue(mp3_object.tag.title)
         self.current_album.ChangeValue(mp3_object.tag.album)
@@ -60,7 +66,7 @@ class MyFrame(wx.Frame):
         self.current_track.ChangeValue(test_track) 
         self.current_year.ChangeValue("Will be added eventually")
 
-
+        
 
         panel.SetSizer(my_sizer)      
         my_sizer.Fit(self)  
