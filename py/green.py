@@ -34,31 +34,31 @@ class MyFrame(wx.Frame):
         fields_left = wx.BoxSizer(wx.VERTICAL) 
         fields_right = wx.BoxSizer(wx.VERTICAL) 
 
-        current_name = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
-        current_album = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
-        current_genre = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
-        current_artist = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
-        current_track = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
-        current_year = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_name = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_album = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_genre = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_artist = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_track = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
+        self.current_year = wx.TextCtrl(panel, style = wx.TE_READONLY, size = (200,25))
 
-        fields_left.Add(current_name, 0, wx.CENTER, 20)
-        fields_left.Add(current_album, 0, wx.CENTER, 20)
-        fields_left.Add(current_genre, 0, wx.CENTER, 20)
-        fields_right.Add(current_artist, 0, wx.CENTER, 20)
-        fields_right.Add(current_track, 0, wx.CENTER, 20)
-        fields_right.Add(current_year, 0, wx.CENTER, 20)
+        fields_left.Add(self.current_name, 0, wx.CENTER, 20)
+        fields_left.Add(self.current_album, 0, wx.CENTER, 20)
+        fields_left.Add(self.current_genre, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_artist, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_track, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_year, 0, wx.CENTER, 20)
         fields_master.Add(fields_left, 0, wx.CENTER, 20)
         fields_master.Add(fields_right, 0, wx.CENTER, 20)
         my_sizer.Add(fields_master, 0, wx.ALL | wx.CENTER, 5)     
 
 
-        current_name.ChangeValue(mp3_object.tag.title)
-        current_album.ChangeValue(mp3_object.tag.album)
-        current_genre.ChangeValue(str(mp3_object.tag.genre)) #See whats up with this; maybe list of genres
-        current_artist.ChangeValue(mp3_object.tag.artist)
+        self.current_name.ChangeValue(mp3_object.tag.title)
+        self.current_album.ChangeValue(mp3_object.tag.album)
+        self.current_genre.ChangeValue(str(mp3_object.tag.genre)) #See whats up with this; maybe list of genres
+        self.current_artist.ChangeValue(mp3_object.tag.artist)
         test_track = str(mp3_object.tag.track_num[0]) + " of " + str(mp3_object.tag.track_num[1])
-        current_track.ChangeValue(test_track) 
-        current_year.ChangeValue("Will be added eventually")
+        self.current_track.ChangeValue(test_track) 
+        self.current_year.ChangeValue("Will be added eventually")
 
 
 

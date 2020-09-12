@@ -28,13 +28,36 @@ class MyFrame(wx.Frame):
         
         img = url_to_bmimg("https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b9/ab/a7/b9aba7fd-bccd-9e84-8cc6-41f616ddb429/source/200x200bb.jpg")
         self.my_img_bitmap = wx.StaticBitmap(panel, -1, img, (10,10));
-        my_sizer.Add(self.my_img_bitmap, 0, wx.ALL | wx.CENTER, 5)        
-        self.current_itunes_name = wx.TextCtrl(panel, size = (200,25))
-        self.current_tunes_artist = wx.TextCtrl(panel, size = (200,25))
-        my_sizer.Add(self.current_itunes_name, 0, wx.CENTER, 20)
-        my_sizer.Add(self.current_tunes_artist, 0, wx.CENTER, 20)
+        my_sizer.Add(self.my_img_bitmap, 0, wx.ALL | wx.CENTER, 5) 
 
 
+        fields_master = wx.BoxSizer(wx.HORIZONTAL)
+        fields_left = wx.BoxSizer(wx.VERTICAL) 
+        fields_right = wx.BoxSizer(wx.VERTICAL) 
+
+        self.itunes_name = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_album = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_genre = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_artist = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_track = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_year = wx.TextCtrl(panel, size = (200,25))
+
+        fields_left.Add(self.itunes_name, 0, wx.CENTER, 20)
+        fields_left.Add(self.itunes_album, 0, wx.CENTER, 20)
+        fields_left.Add(self.itunes_genre, 0, wx.CENTER, 20)
+        fields_right.Add(self.itunes_artist, 0, wx.CENTER, 20)
+        fields_right.Add(self.itunes_track, 0, wx.CENTER, 20)
+        fields_right.Add(self.itunes_year, 0, wx.CENTER, 20)
+        fields_master.Add(fields_left, 0, wx.CENTER, 20)
+        fields_master.Add(fields_right, 0, wx.CENTER, 20)
+        my_sizer.Add(fields_master, 0, wx.ALL | wx.CENTER, 5)    
+
+        self.itunes_name.SetHint('Song')
+        self.itunes_album.SetHint('Album')
+        self.itunes_genre.SetHint('Genre')
+        self.itunes_artist.SetHint('Artist')
+        self.itunes_track.SetHint('Track Number')
+        self.itunes_year.SetHint('Year')
 
 
         panel.SetSizer(my_sizer)      
@@ -46,8 +69,13 @@ class MyFrame(wx.Frame):
         if value:
             self.itunes_json = itunesJSON(value)
             self.my_img_bitmap.SetBitmap(url_to_bmimg(self.itunes_json.get_image()))
-            self.current_itunes_name.ChangeValue(self.itunes_json.get_track_name())
-            self.current_tunes_artist.ChangeValue(self.itunes_json.get_artist())
+            self.itunes_name.ChangeValue(self.itunes_json.get_track_name())
+            self.itunes_album.ChangeValue(self.itunes_json.get_album())
+            self.itunes_genre.ChangeValue(self.itunes_json.get_genre())
+            self.itunes_artist.ChangeValue(self.itunes_json.get_artist())
+            track_statement = "Hello! (_ out of _)"
+            self.itunes_track.ChangeValue(track_statement)
+            self.itunes_year.ChangeValue("We'll Figure it Out (year)")
             self.Refresh()
             
         else:
