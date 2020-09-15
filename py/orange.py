@@ -3,6 +3,7 @@ import urllib.request
 import io
 import json
 from itunesJSON import itunesJSON
+from TrackTextBox import TrackTextBox
 
 # Pane pinging itunes
 # lower right of window
@@ -62,7 +63,7 @@ class MyFrame(wx.Frame):
         self.itunes_album = wx.TextCtrl(panel, size = (200,25))
         self.itunes_genre = wx.TextCtrl(panel, size = (200,25))
         self.itunes_artist = wx.TextCtrl(panel, size = (200,25))
-        self.itunes_track = wx.TextCtrl(panel, size = (200,25))
+        self.itunes_track = TrackTextBox(panel)#wx.TextCtrl(panel, size = (200,25))
         self.itunes_year = wx.TextCtrl(panel, size = (200,25))
 
         fields_left.Add(self.itunes_name, 0, wx.CENTER, 20)
@@ -79,7 +80,7 @@ class MyFrame(wx.Frame):
         self.itunes_album.SetHint('Album')
         self.itunes_genre.SetHint('Genre')
         self.itunes_artist.SetHint('Artist')
-        self.itunes_track.SetHint('Track Number')
+        # self.itunes_track.SetHint('Track Number')
         self.itunes_year.SetHint('Year')
 
 
