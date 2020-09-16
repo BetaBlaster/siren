@@ -2,6 +2,11 @@ import wx
 import eyed3
 import glob
 import os
+import io
+import urllib.request
+import json
+
+
 
 class DropTarget(wx.FileDropTarget): 
    def __init__(self, object): 
@@ -22,7 +27,7 @@ class DropTarget(wx.FileDropTarget):
             )
             return False
 
-class Mp3Panel(wx.Panel):    
+class SearchPanel(wx.Panel):    
     def __init__(self, parent):
         super().__init__(parent)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -61,16 +66,14 @@ class Mp3Panel(wx.Panel):
         self.list_ctrl.InsertColumn(4, 'Location', width=200)
 
         mp3s = glob.glob(folder_path + '/*.mp3')
-        mp3_objects = [] # USELESS?
         self.indexer = 0
         for mp3 in mp3s:
             mp3_object = eyed3.load(mp3)
             self.list_ctrl.InsertItem(self.indexer, mp3.split('/')[-1].split('.mp3')[0])
             self.list_ctrl.SetItem(self.indexer, 1, mp3_object.tag.title)
-            self.list_ctrl.SetItem(self.indexer, 2, mp3_object.tag.artist)
-            self.list_ctrl.SetItem(self.indexer, 3, mp3_object.tag.album)
-            self.list_ctrl.SetItem(self.indexer, 4, mp3)
-            mp3_objects.append(mp3_object) # USELESS
+            if mp3_object.tag.artist: self.list_ctrl.SetItem(self.indexer, 2, mp3_object.tag.artist)
+            if mp3_object.tag.album: self.list_ctrl.SetItem(self.indexer, 3, mp3_object.tag.album)
+            self.list_ctrl.SetItem(self.indexer, 4, mp3) # Make rest of space
             self.row_obj_dict[self.indexer] = mp3_object
             self.row_dir_dict[self.indexer] = mp3
             self.indexer += 1
@@ -108,6 +111,78 @@ class Mp3Panel(wx.Panel):
         print('in on_edit')
         print(item)
 
+class LocalFilePanel(wx.Panel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        overall_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.missing_img = wx.Bitmap(os.getcwd() + "/missing.jpg")
+
+        self.mp3_obj = eyed3.load(os.getcwd() + "/test.mp3")
+
+        
+        self.img_bitmap = wx.StaticBitmap(self, -1, self.missing_img, (10,10));
+        self.update_image() ######### TO REMOVE?
+        
+
+        overall_sizer.Add(self.img_bitmap, 0, wx.ALL | wx.CENTER, 5)     
+           
+        fields_master = wx.BoxSizer(wx.HORIZONTAL)
+        fields_left = wx.BoxSizer(wx.VERTICAL) 
+        fields_right = wx.BoxSizer(wx.VERTICAL) 
+
+        self.current_name = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.current_album = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.current_genre = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.current_artist = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.current_track = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.current_year = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+
+        fields_left.Add(self.current_name, 0, wx.CENTER, 20)
+        fields_left.Add(self.current_album, 0, wx.CENTER, 20)
+        fields_left.Add(self.current_genre, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_artist, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_track, 0, wx.CENTER, 20)
+        fields_right.Add(self.current_year, 0, wx.CENTER, 20)
+        fields_master.Add(fields_left, 0, wx.CENTER, 20)
+        fields_master.Add(fields_right, 0, wx.CENTER, 20)
+        overall_sizer.Add(fields_master, 0, wx.ALL | wx.CENTER, 5)
+
+
+        self.current_name.SetHint('Song')
+        self.current_album.SetHint('Album')
+        self.current_genre.SetHint('Genre')
+        self.current_artist.SetHint('Artist')
+        self.current_track.SetHint('Track Number')
+        self.current_year.SetHint('Year')
+
+        self.SetSizer(overall_sizer)
+
+        self.update_text() ######### TO REMOVE?
+
+    def load_file(self, path):
+        self.mp3_obj = eyed3.load(path)
+        self.update_text()
+        self.update_image()
+    
+    def update_text(self):
+        if self.mp3_obj.tag.title: self.current_name.ChangeValue(self.mp3_obj.tag.title)
+        if self.mp3_obj.tag.album: self.current_album.ChangeValue(self.mp3_obj.tag.album)
+        if self.mp3_obj.tag.genre: self.current_genre.ChangeValue(str(self.mp3_obj.tag.genre)) #See whats up with this; maybe list of genres
+        if self.mp3_obj.tag.artist: self.current_artist.ChangeValue(self.mp3_obj.tag.artist)
+        test_track = str(self.mp3_obj.tag.track_num[0]) + " of " + str(self.mp3_obj.tag.track_num[1]) if self.mp3_obj.tag.track_num else ""
+        self.current_track.ChangeValue(test_track) 
+        self.current_year.ChangeValue("Will be added eventually")
+
+    def update_image(self):
+        if self.mp3_obj.tag.images:
+            img = io.BytesIO(self.mp3_obj.tag.images[0].image_data)
+            self.mp3_img = wx.Image(img).Scale(200, 200).ConvertToBitmap()
+            self.img_bitmap.SetBitmap(self.mp3_img)
+        else:
+            self.img_bitmap.SetBitmap(self.missing_img)
+
 class RandomPanel(wx.Panel):
     """"""
 
@@ -124,12 +199,12 @@ class MasterPanel(wx.Panel):
         horizSplit = wx.SplitterWindow(self)
         editPaneSplit = wx.SplitterWindow(horizSplit)
 
-        self.currentPanel = RandomPanel(editPaneSplit, "green")
+        self.currentPanel = LocalFilePanel(editPaneSplit)
         self.itunesPanel = RandomPanel(editPaneSplit, "orange")
         editPaneSplit.SplitVertically(self.currentPanel, self.itunesPanel)
         editPaneSplit.SetSashGravity(0.5)
         
-        self.searchPanel = Mp3Panel(horizSplit)
+        self.searchPanel = SearchPanel(horizSplit)
         horizSplit.SplitHorizontally(self.searchPanel, editPaneSplit)
         horizSplit.SetSashGravity(0.5)
 
