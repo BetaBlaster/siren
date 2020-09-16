@@ -8,8 +8,6 @@ import json
 from TrackTextBox import TrackTextBox
 
 
-
-
 class DropTarget(wx.FileDropTarget): 
    def __init__(self, object): 
         wx.FileDropTarget.__init__(self) 
@@ -108,10 +106,12 @@ class SearchPanel(wx.Panel):
             )
 
     def on_edit(self, event):
-        choice= self.list_ctrl.GetFirstSelected()
+        choice = self.list_ctrl.GetFirstSelected()
         item = self.list_ctrl.GetItem(itemIdx=choice, col=4).GetText()
         print('in on_edit')
         print(item)
+        frame.panel.currentPanel.load_file(item)
+        # POPULATE SEARCH FIELD aaaaand search?
 
 class LocalFilePanel(wx.Panel):
     def __init__(self, parent):
@@ -123,11 +123,12 @@ class LocalFilePanel(wx.Panel):
 
         self.mp3_obj = eyed3.load(os.getcwd() + "/test.mp3")
 
+        self.title = wx.StaticText(self, style = wx.CENTER, label="Current File Metadata:")
+        overall_sizer.Add(self.title, 0, wx.ALL | wx.CENTER, 5)     
+
         
         self.img_bitmap = wx.StaticBitmap(self, -1, self.missing_img, (10,10));
         self.update_image() ######### TO REMOVE?
-        
-
         overall_sizer.Add(self.img_bitmap, 0, wx.ALL | wx.CENTER, 5)     
            
         fields_master = wx.BoxSizer(wx.HORIZONTAL)
@@ -138,7 +139,7 @@ class LocalFilePanel(wx.Panel):
         self.current_album = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
         self.current_genre = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
         self.current_artist = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
-        self.trackbox = TrackTextBox(self)
+        self.trackbox = TrackTextBox(self, True)
         self.current_track = self.trackbox.getTB()
         self.current_year = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
 
