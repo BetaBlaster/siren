@@ -5,6 +5,8 @@ import os
 import io
 import urllib.request
 import json
+from TrackTextBox import TrackTextBox
+
 
 
 
@@ -136,7 +138,8 @@ class LocalFilePanel(wx.Panel):
         self.current_album = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
         self.current_genre = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
         self.current_artist = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
-        self.current_track = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
+        self.trackbox = TrackTextBox(self)
+        self.current_track = self.trackbox.getTB()
         self.current_year = wx.TextCtrl(self, style = wx.TE_READONLY, size = (200,25))
 
         fields_left.Add(self.current_name, 0, wx.CENTER, 20)
@@ -154,7 +157,6 @@ class LocalFilePanel(wx.Panel):
         self.current_album.SetHint('Album')
         self.current_genre.SetHint('Genre')
         self.current_artist.SetHint('Artist')
-        self.current_track.SetHint('Track Number')
         self.current_year.SetHint('Year')
 
         self.SetSizer(overall_sizer)
@@ -171,8 +173,7 @@ class LocalFilePanel(wx.Panel):
         if self.mp3_obj.tag.album: self.current_album.ChangeValue(self.mp3_obj.tag.album)
         if self.mp3_obj.tag.genre: self.current_genre.ChangeValue(str(self.mp3_obj.tag.genre)) #See whats up with this; maybe list of genres
         if self.mp3_obj.tag.artist: self.current_artist.ChangeValue(self.mp3_obj.tag.artist)
-        test_track = str(self.mp3_obj.tag.track_num[0]) + " of " + str(self.mp3_obj.tag.track_num[1]) if self.mp3_obj.tag.track_num else ""
-        self.current_track.ChangeValue(test_track) 
+        if self.mp3_obj.tag.track_num: self.trackbox.update(str(self.mp3_obj.tag.track_num[0]), str(self.mp3_obj.tag.track_num[1]))
         self.current_year.ChangeValue("Will be added eventually")
 
     def update_image(self):
