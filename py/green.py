@@ -79,9 +79,7 @@ class LocalFilePanel(wx.Panel):
             self.mp3_img = wx.Image(img).Scale(200, 200).ConvertToBitmap()
             self.img_bitmap.SetBitmap(img)
         else:
-            self.img_bitmap.SetBitmap(self.missing_img)
-              
-    
+            self.img_bitmap.SetBitmap(self.missing_img) 
 
 class MyFrame(wx.Frame):    
     def __init__(self):
@@ -89,7 +87,6 @@ class MyFrame(wx.Frame):
         panel = LocalFilePanel(self)
         
         self.Show()
-
 
 if __name__ == '__main__':
     app = wx.App()

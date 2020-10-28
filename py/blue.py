@@ -115,8 +115,7 @@ class Mp3Panel(wx.Panel):
 
 class Mp3Frame(wx.Frame):
     def __init__(self):
-        wx.Frame.__init__(self, parent=None, 
-                          title='Mp3 Tag Editor')
+        wx.Frame.__init__(self, parent=None, title='Mp3 Tag Editor')
         self.panel = Mp3Panel(self)
         self.create_menu()
         self.panel.update_mp3_listing(os.getcwd())
